@@ -1,5 +1,5 @@
 const weather = document.getElementById("weather");
-const weatherKey = 'bfebc285607853a00e5d7cb88e7045e7';
+const weatherKey = 'NN1uCg60fyE3loHzJKwwzNzRA5arOjm8%2FHcdN2qxiqljheWlwIdDS4DB2xB3fdx6yqONJpFdpw%2F5lctw2MQRhA%3D%3D';
 const COORDS = 'coords';
 const CNT = 16;
 
@@ -26,14 +26,13 @@ const degree = (deg) => {
 };
 
 const getWeather = (lat, lng) => {
-    fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${weatherKey}&units=metric&lang=kr&cnt=${CNT}`
+    fetch(`http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst?serviceKey=${weatherKey}&pageNo=1&numOfRows=10&dataType=JSON&base_date=20200620&base_time=0500&nx=92&ny=131`
     ).then((res) => {
         return res.json();
     }).then((json) => {
         console.log(json);
         let date = new Date();
         
-
         const createPOne = document.createElement('p');
         createPOne.textContent = `지역 : ${json.city.name}`
         weather.appendChild(createPOne);
@@ -63,7 +62,6 @@ const getWeather = (lat, lng) => {
                 weather.appendChild(createDiv);
             });
         }
-        
     });
 };
 
