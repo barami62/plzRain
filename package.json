@@ -19,5 +19,9 @@
   "homepage": "https://github.com/barami62/plzRain#readme",
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "engines":{
+    "node":"14.4.0",
+    "npm":"6.14.5"
   }
 }
