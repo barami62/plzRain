@@ -2,15 +2,22 @@
   "name": "plzrain",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
-  "dependencies": {
-    "express": "^4.17.1"
-  },
-  "devDependencies": {},
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start" : "node app.js"
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/barami62/plzRain.git"
   },
   "author": "barami62",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/barami62/plzRain/issues"
+  },
+  "homepage": "https://github.com/barami62/plzRain#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
