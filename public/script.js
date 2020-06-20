@@ -27,5 +27,5 @@ xhr.onload = () => {
     }
 };
 
-xhr.open('GET', `http://api.openweathermap.org/data/2.5/weather?q=Seoul&appid=${weatherKey}`);
+xhr.open('GET', `https://api.openweathermap.org/data/2.5/weather?q=Seoul&appid=${weatherKey}`);
 xhr.send();
