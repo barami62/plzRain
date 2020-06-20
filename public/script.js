@@ -1,35 +1,6 @@
 const weather = document.getElementById("weather");
-const xhr = new XMLHttpRequest();
-
-let weatherKey = 'bfebc285607853a00e5d7cb88e7045e7';
-
-xhr.onload = () => {
-    if (xhr.status === 200 || xhr.status === 201) {
-        let weatherObj = JSON.parse(xhr.responseText);
-        console.log(weatherObj);
-
-        let weatherText = {
-            '기온': (weatherObj.main.temp - 273.15).toFixed(1),
-            '최고 기온': (weatherObj.main.temp_max - 273.15).toFixed(1),
-            '최저 기온': (weatherObj.main.temp_min - 273.15).toFixed(1),
-            '기압': weatherObj.main.pressure + "hPa",
-            '습도': weatherObj.main.humidity + "%",
-            '날씨': weatherObj.weather[0].main,
-            '풍속': weatherObj.wind.speed + "m/s",
-            '풍향': degree(weatherObj.wind.deg),
-            '구름': weatherObj.clouds.all + "%",
-        };
-
-        Object.keys(weatherText).map(key => {
-            const createP = document.createElement('p');
-            createP.textContent = `${key} : ${weatherText[key]}`
-            weather.appendChild(createP);
-        });
-    }
-};
-
-xhr.open('GET', `https://api.openweathermap.org/data/2.5/weather?q=Seoul&appid=${weatherKey}`);
-xhr.send();
+const weatherKey = 'bfebc285607853a00e5d7cb88e7045e7';
+const COORDS = 'coords';
 
 const degree = (deg) => {
     if(deg < 22.5 && deg >= 337.5) {
@@ -50,3 +21,70 @@ const degree = (deg) => {
         return '북서풍';
     }
 };
+
+const getWeather = (lat, lng) => {
+    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${weatherKey}&units=metric`
+    ).then((res) => {
+        return res.json();
+    }).then((json) => {
+        console.log(json);
+        
+        let weatherText = {
+            '지역': json.name,
+            '기온': (json.main.temp).toFixed(1) + "°C",
+            '최고 기온': (json.main.temp_max).toFixed(1),
+            '최저 기온': (json.main.temp_min).toFixed(1),
+            '기압': json.main.pressure + "hPa",
+            '습도': json.main.humidity + "%",
+            '날씨': json.weather[0].main,
+            '풍속': json.wind.speed + "m/s",
+            '풍향': degree(json.wind.deg),
+            '구름': json.clouds.all + "%",
+        };
+
+        Object.keys(weatherText).map(key => {
+            const createP = document.createElement('p');
+            createP.textContent = `${key} : ${weatherText[key]}`
+            weather.appendChild(createP);
+        });
+    });
+};
+
+const saveCoords = (coordsObj) => {
+    localStorage.setItem(COORDS, JSON.stringify(coordsObj));
+};
+
+const handleGeoSuccess = (position) => {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    const coordsObj = {
+        latitude,
+        longitude
+    };
+    saveCoords(coordsObj);
+    getWeather(latitude, longitude);
+};
+
+const handleGeoError = () => {
+    console.log("위치 정보를 가져올 수 없습니다.");
+};
+
+const askForCoords = () => {
+    navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoError);
+};
+
+const loadCoords = () => {
+    const loadedCoords = localStorage.getItem(COORDS);
+    if(loadedCoords === null) {
+        askForCoords();
+    } else {
+        const parsedCoords = JSON.parse(loadedCoords);
+        getWeather(parsedCoords.latitude, parsedCoords.longitude);
+    }
+};
+
+const init = () => {
+    loadCoords();
+};
+
+init();
