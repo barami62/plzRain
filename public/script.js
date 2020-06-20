@@ -23,23 +23,26 @@ const degree = (deg) => {
 };
 
 const getWeather = (lat, lng) => {
-    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${weatherKey}&units=metric`
+    fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${weatherKey}&units=metric&lang=kr&cnt=9`
     ).then((res) => {
         return res.json();
     }).then((json) => {
         console.log(json);
+        let date = new Date();
+        date.setTime(json.list[0].dt * 1000);
         
         let weatherText = {
-            '지역': json.name,
-            '기온': (json.main.temp).toFixed(1) + "°C",
-            '최고 기온': (json.main.temp_max).toFixed(1),
-            '최저 기온': (json.main.temp_min).toFixed(1),
-            '기압': json.main.pressure + "hPa",
-            '습도': json.main.humidity + "%",
-            '날씨': json.weather[0].main,
-            '풍속': json.wind.speed + "m/s",
-            '풍향': degree(json.wind.deg),
-            '구름': json.clouds.all + "%",
+            '지역': json.city.name,
+            '시간': date,
+            '기온': (json.list[0].main.temp).toFixed(1) + "°C",
+            '최고 기온': (json.list[0].main.temp_max).toFixed(1),
+            '최저 기온': (json.list[0].main.temp_min).toFixed(1),
+            '기압': json.list[0].main.pressure + "hPa",
+            '습도': json.list[0].main.humidity + "%",
+            '날씨': json.list[0].weather[0].description,
+            '풍속': json.list[0].wind.speed + "m/s",
+            '풍향': degree(json.list[0].wind.deg),
+            '구름': json.list[0].clouds.all + "%",
         };
 
         Object.keys(weatherText).map(key => {
