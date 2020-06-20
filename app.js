@@ -3,9 +3,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const path = require('path');
 const indexRouter = require('./routes/index');
+const weatherRouter = require('./routes/weather');
+require('dotenv').config();
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', indexRouter);
+app.get('/', indexRouter);
 
 // app.get('/', (req, res) => res.sendFile('/index.html'));
 
