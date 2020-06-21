@@ -37,7 +37,7 @@ const dateToKorean = (date) => {
     weekday[5] = "금";
     weekday[6] = "토";
 
-    month = date.getMonth();
+    month = date.getMonth() + 1;
     day = date.getDate();
     hour = date.getHours();
     week = weekday[date.getDay()];

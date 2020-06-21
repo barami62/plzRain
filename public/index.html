@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,26 +8,46 @@
     <link href="/styles.css">
     <style>
         #openWeather {
-            text-align:center;
+            text-align: center;
         }
 
-        #openWeather > div {
+        #openWeather>div {
             border: 1px solid black;
             margin: 3px;
-            display:inline-block
+            display: inline-block
         }
 
-        #openWeather > div > p {
+        #openWeather>div>p {
             margin: 5px;
         }
     </style>
 </head>
+
 <body>
     <h3>plz Rain!!</h3>
     <br>
     <button onclick="alarming()">ClickMe!</button>
+    <button type="button" id="notification" onclick="showNotification();">notification</button>
     <div id="openWeather"></div>
-    <!-- <div id="agencyWeather"></div> -->
     <script src="openWeather.js"></script>
+    <script>
+        navigator.serviceWorker.register('/service-worker.js'); //service-worker.js 파일을 불러옵니다.
+        
+        function showNotification() {
+            Notification.requestPermission((result) => {
+                if (result === 'granted') {
+                    navigator.serviceWorker.ready.then((registration) => {
+                        registration.showNotification('Vibration Sample', {
+                            body: 'Buzz! Buzz!',
+                            vibrate: [200, 100, 200, 100, 200, 100, 200],
+                            tag: 'vibration-sample',
+                            data: 'http://www.naver.com'
+                        });
+                    });
+                }
+            });
+        };
+    </script>
 </body>
+
 </html>
