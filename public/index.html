@@ -37,6 +37,7 @@
     <button onclick="alarming()">컴퓨터용 알람</button>
     <button type="button" id="notification" onclick="showNotification();">모바일용 알람</button>
     <div id="openWeather"></div>
+    
     <script src="openWeather.js"></script>
     <script>
         navigator.serviceWorker.register('/service-worker.js'); //service-worker.js 파일을 불러옵니다.
@@ -50,7 +51,7 @@
                             vibrate: [200, 100, 200, 100, 200, 100, 200],
                             icon: '/rain.jpg',
                             tag: 'vibration-sample',
-                            data: 'http://www.naver.com'
+                            data: 'https://plzrain.herokuapp.com/'
                         });
                     });
                 }

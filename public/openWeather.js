@@ -1,7 +1,7 @@
 const weather = document.getElementById("openWeather");
 const weatherKey = 'bfebc285607853a00e5d7cb88e7045e7';
 const COORDS = 'coords';
-const CNT = 16;
+const CNT = 40;
 let coldColorArr = ["#0000ff", "#4040ff", "#8080ff", "#bfbfff"];
 let hotColorArr = ['#ffb9b9', "#ffd1d1", "#ffb9b9", "#ff8b8b", "#ff5d5d", "#ff2e2e", "#ff0000"];
 
@@ -143,8 +143,6 @@ const getWeather = (lat, lng) => {
             date.setTime(json.list[i].dt * 1000);
             curDays = date.getDate();
 
-            
-
             if(days !== curDays) {
                 const createHr = document.createElement('hr');
                 weather.appendChild(createHr);
@@ -156,8 +154,10 @@ const getWeather = (lat, lng) => {
             }
 
             let weatherText = {
+                '아이콘': json.list[i].weather[0].icon,
                 '기온': (json.list[i].main.temp).toFixed(1),
                 '습도': json.list[i].main.humidity + "%",
+                '날씨기준': json.list[i].weather[0].main,
                 '날씨': json.list[i].weather[0].description,
                 '풍속': json.list[i].wind.speed + "m/s",
                 '풍향': degree(json.list[i].wind.deg),
@@ -174,18 +174,30 @@ const getWeather = (lat, lng) => {
 
 
             Object.keys(weatherText).map(key => {
-                const createP = document.createElement('p');
-                
-                if(key === '기온') {
-                    createP.textContent = `${key} : ${addNumberColor(weatherText[key], key, createP)}°C`
-                } else {
-                    createP.textContent = `${key} : ${weatherText[key]}`
-                }
-                createDiv.appendChild(createP);
-                weather.appendChild(createDiv);
-            });
+                if(key === '날씨기준') {
 
-            
+                } else {
+                    if (key === '아이콘') {
+                        const createImg = document.createElement('img');
+                        let iconUrl = `http://openweathermap.org/img/wn/${weatherText[key]}@2x.png`;
+
+                        createImg.src = iconUrl;
+                        createImg.style.width = "50px";
+
+                        createDiv.appendChild(createImg);
+                    } else if(key === '기온') {
+                        const createP = document.createElement('p');
+                        createP.textContent = `${key} : ${addNumberColor(weatherText[key], key, createP)}°C`;
+                        createP.style.marginTop = "0";
+                        createDiv.appendChild(createP);
+                    } else {
+                        const createP = document.createElement('p');
+                        createP.textContent = `${key} : ${weatherText[key]}`;
+                        createDiv.appendChild(createP);
+                    }
+                    weather.appendChild(createDiv);
+                }
+            });
         }
     });
 };
@@ -207,6 +219,10 @@ const handleGeoSuccess = (position) => {
 
 const handleGeoError = () => {
     console.log("위치 정보를 가져올 수 없습니다.");
+    
+    const createDiv = document.createElement('div');
+    createDiv.textContent = "위치 정보를 가져올 수 없습니다!";
+    weather.appendChild(createDiv);
 };
 
 const askForCoords = () => {
@@ -230,6 +246,13 @@ const init = () => {
             Notification.requestPermission();
         }
     }
+    // api.openweathermap.org/data/2.5/forecast?lat=35&lon=139
+    fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=38.1219&lon=127.5447&appid=${weatherKey}&units=metric&lang=kr&cnt=100`
+    ).then((res) => {
+        return res.json();
+    }).then((json) => {
+        console.log(json);
+    });
 };
 
 init();
