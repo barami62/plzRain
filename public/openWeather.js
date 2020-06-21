@@ -41,14 +41,14 @@ const dateToKorean = (date) => {
     week = weekday[date.getDay()];
 
     if (hour < 12) {
-        hour = "오전 " + hour;
+        hour = "오전  " + hour;
     } else if (hour === 12) {
         hour = "오후 " + hour;
     } else {
         hour = "오후 " + (hour - 12);
     }
 
-    text = `${month}월 ${day}일(${week}) ${hour}시 예보`;
+    text = `${month}월 ${day}일(${week}) ${hour}시`;
     return text;
 };
 
@@ -68,11 +68,11 @@ const getWeather = (lat, lng) => {
             date.setTime(json.list[i].dt * 1000);
 
             let weatherText = {
-                '시간': dateToKorean(date),
+                
                 '기온': (json.list[i].main.temp).toFixed(1) + "°C",
-                '최고 기온': (json.list[i].main.temp_max).toFixed(1),
-                '최저 기온': (json.list[i].main.temp_min).toFixed(1),
-                '기압': json.list[i].main.pressure + "hPa",
+                // '최고 기온': (json.list[i].main.temp_max).toFixed(1),
+                // '최저 기온': (json.list[i].main.temp_min).toFixed(1),
+                // '기압': json.list[i].main.pressure + "hPa",
                 '습도': json.list[i].main.humidity + "%",
                 '날씨': json.list[i].weather[0].description,
                 '풍속': json.list[i].wind.speed + "m/s",
@@ -81,6 +81,11 @@ const getWeather = (lat, lng) => {
             };
 
             const createDiv = document.createElement('div');
+
+            const createP = document.createElement('p');
+            createP.textContent = dateToKorean(date);
+            createDiv.appendChild(createP);
+            // weather.appendChild(createDiv);
 
             Object.keys(weatherText).map(key => {
                 const createP = document.createElement('p');
