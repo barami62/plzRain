@@ -2,6 +2,7 @@ const weather = document.getElementById("openWeather");
 const weatherKey = 'bfebc285607853a00e5d7cb88e7045e7';
 const COORDS = 'coords';
 const CNT = 16;
+let colorArr = ["#0000ff", "#4040ff", "#8080ff", "#bfbfff", '#ffb9b9', "#ffd1d1", "#ffb9b9", "#ff8b8b", "#ff5d5d", "#ff2e2e", "#ff0000"];
 
 const degree = (deg) => {
     if(deg < 22.5 || deg >= 337.5) {
@@ -41,16 +42,65 @@ const dateToKorean = (date) => {
     week = weekday[date.getDay()];
 
     if (hour < 12) {
-        hour = "오전  " + hour;
+        hour = "오전  0" + hour;
     } else if (hour === 12) {
         hour = "오후 " + hour;
     } else {
-        hour = "오후 " + (hour - 12);
+        hour = "오후  0" + (hour - 12);
     }
 
     text = `${month}월 ${day}일(${week}) ${hour}시`;
     return text;
 };
+
+const addNumberColor = (num, data, dom) => {
+    switch(data) {
+        case '기온' :
+            console.log("정상 작동");
+            if(num < -12) {
+                dom.style.color = colorArr[0];
+                return num
+            } else if(num < -9) {
+                dom.style.color = colorArr[1];
+                return num
+            } else if(num < -6) {
+                dom.style.color = colorArr[2];
+                return num
+            } else if(num < -3) {
+                dom.style.color = colorArr[3];
+                return num
+            } else if(num < 5) {
+                dom.style.color = colorArr[4];
+                return num
+            } else if(num < 10) {
+                dom.style.color = colorArr[5];
+                return num
+            } else if(num < 15) {
+                dom.style.color = colorArr[6];
+                return num
+            } else if(num < 20) {
+                dom.style.color = colorArr[7];
+                return num
+            } else if(num < 25) {
+                dom.style.color = colorArr[8];
+                return num
+            } else if(num < 30) {
+                dom.style.color = colorArr[9];
+                return num
+            } else if(num >= 30) {
+                dom.style.color = colorArr[10];
+                return num
+            }
+            break;
+        case '습도' :
+        case '구름' :
+
+            break;
+        case '풍속' :
+
+            break;
+    }
+}
 
 const getWeather = (lat, lng) => {
     fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${weatherKey}&units=metric&lang=kr&cnt=${CNT}`
@@ -68,11 +118,7 @@ const getWeather = (lat, lng) => {
             date.setTime(json.list[i].dt * 1000);
 
             let weatherText = {
-                
-                '기온': (json.list[i].main.temp).toFixed(1) + "°C",
-                // '최고 기온': (json.list[i].main.temp_max).toFixed(1),
-                // '최저 기온': (json.list[i].main.temp_min).toFixed(1),
-                // '기압': json.list[i].main.pressure + "hPa",
+                '기온': (json.list[i].main.temp).toFixed(1),
                 '습도': json.list[i].main.humidity + "%",
                 '날씨': json.list[i].weather[0].description,
                 '풍속': json.list[i].wind.speed + "m/s",
@@ -85,11 +131,15 @@ const getWeather = (lat, lng) => {
             const createP = document.createElement('p');
             createP.textContent = dateToKorean(date);
             createDiv.appendChild(createP);
-            // weather.appendChild(createDiv);
 
             Object.keys(weatherText).map(key => {
                 const createP = document.createElement('p');
-                createP.textContent = `${key} : ${weatherText[key]}`
+                if(key === '기온') {
+                    console.log("정상작동");
+                    createP.textContent = `${key} : ${addNumberColor(weatherText[key], key, createP)}°C`
+                } else {
+                    createP.textContent = `${key} : ${weatherText[key]}`
+                }
                 createDiv.appendChild(createP);
                 weather.appendChild(createDiv);
             });
