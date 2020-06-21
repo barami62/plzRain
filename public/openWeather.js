@@ -4,7 +4,7 @@ const COORDS = 'coords';
 const CNT = 16;
 
 const degree = (deg) => {
-    if(deg < 22.5 && deg >= 337.5) {
+    if(deg < 22.5 || deg >= 337.5) {
         return '북풍';
     } else if(deg >= 22.5 && deg < 67.5) {
         return '북동풍';
@@ -20,9 +20,36 @@ const degree = (deg) => {
         return '서풍';
     } else if(deg >= 292.5 && deg < 337.5) {
         return '북서풍';
-    } else {
-        return '무풍';
     }
+};
+
+const dateToKorean = (date) => {
+    let month, day, hour, week;
+    let weekday = new Array(7);
+    let text;
+    weekday[0] = "일";
+    weekday[1] = "월";
+    weekday[2] = "화";
+    weekday[3] = "수";
+    weekday[4] = "목";
+    weekday[5] = "금";
+    weekday[6] = "토";
+
+    month = date.getMonth();
+    day = date.getDate();
+    hour = date.getHours();
+    week = weekday[date.getDay()];
+
+    if (hour < 12) {
+        hour = "오전 " + hour;
+    } else if (hour === 12) {
+        hour = "오후 " + hour;
+    } else {
+        hour = "오후 " + (hour - 12);
+    }
+
+    text = `${month}월 ${day}일(${week}) ${hour}시 예보`;
+    return text;
 };
 
 const getWeather = (lat, lng) => {
@@ -41,7 +68,7 @@ const getWeather = (lat, lng) => {
             date.setTime(json.list[i].dt * 1000);
 
             let weatherText = {
-                '시간': date,
+                '시간': dateToKorean(date),
                 '기온': (json.list[i].main.temp).toFixed(1) + "°C",
                 '최고 기온': (json.list[i].main.temp_max).toFixed(1),
                 '최저 기온': (json.list[i].main.temp_min).toFixed(1),
