@@ -2,7 +2,8 @@ const weather = document.getElementById("openWeather");
 const weatherKey = 'bfebc285607853a00e5d7cb88e7045e7';
 const COORDS = 'coords';
 const CNT = 16;
-let colorArr = ["#0000ff", "#4040ff", "#8080ff", "#bfbfff", '#ffb9b9', "#ffd1d1", "#ffb9b9", "#ff8b8b", "#ff5d5d", "#ff2e2e", "#ff0000"];
+let coldColorArr = ["#0000ff", "#4040ff", "#8080ff", "#bfbfff"];
+let hotColorArr = ['#ffb9b9', "#ffd1d1", "#ffb9b9", "#ff8b8b", "#ff5d5d", "#ff2e2e", "#ff0000"];
 
 const degree = (deg) => {
     if(deg < 22.5 || deg >= 337.5) {
@@ -56,39 +57,38 @@ const dateToKorean = (date) => {
 const addNumberColor = (num, data, dom) => {
     switch(data) {
         case '기온' :
-            console.log("정상 작동");
             if(num < -12) {
-                dom.style.color = colorArr[0];
+                dom.style.color = coldColorArr[0];
                 return num
             } else if(num < -9) {
-                dom.style.color = colorArr[1];
+                dom.style.color = coldColorArr[1];
                 return num
             } else if(num < -6) {
-                dom.style.color = colorArr[2];
+                dom.style.color = coldColorArr[2];
                 return num
             } else if(num < -3) {
-                dom.style.color = colorArr[3];
+                dom.style.color = coldColorArr[3];
                 return num
             } else if(num < 5) {
-                dom.style.color = colorArr[4];
+                dom.style.color = hotColorArr[0];
                 return num
             } else if(num < 10) {
-                dom.style.color = colorArr[5];
+                dom.style.color = hotColorArr[1];
                 return num
             } else if(num < 15) {
-                dom.style.color = colorArr[6];
+                dom.style.color = hotColorArr[2];
                 return num
             } else if(num < 20) {
-                dom.style.color = colorArr[7];
+                dom.style.color = hotColorArr[3];
                 return num
             } else if(num < 25) {
-                dom.style.color = colorArr[8];
+                dom.style.color = hotColorArr[4];
                 return num
             } else if(num < 30) {
-                dom.style.color = colorArr[9];
+                dom.style.color = hotColorArr[5];
                 return num
             } else if(num >= 30) {
-                dom.style.color = colorArr[10];
+                dom.style.color = hotColorArr[6];
                 return num
             }
             break;
@@ -100,7 +100,21 @@ const addNumberColor = (num, data, dom) => {
 
             break;
     }
-}
+};
+
+const alarming = () => {
+    setTimeout(() => {
+        notify();
+    }, 3000);
+};
+
+const notify = () => {
+    if(Notification.permission !== 'granted') {
+        alert('알람 기능이 불가능합니다!');
+    } else {
+        const noti = new Notification('알람 제목', {body:'알람 내용'});
+    }
+};
 
 const getWeather = (lat, lng) => {
     fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${weatherKey}&units=metric&lang=kr&cnt=${CNT}`
@@ -137,7 +151,6 @@ const getWeather = (lat, lng) => {
             Object.keys(weatherText).map(key => {
                 const createP = document.createElement('p');
                 if(key === '기온') {
-                    console.log("정상작동");
                     createP.textContent = `${key} : ${addNumberColor(weatherText[key], key, createP)}°C`
                 } else {
                     createP.textContent = `${key} : ${weatherText[key]}`
@@ -184,6 +197,11 @@ const loadCoords = () => {
 
 const init = () => {
     loadCoords();
+    window.onload = function () {
+        if (window.Notification) {
+            Notification.requestPermission();
+        }
+    }
 };
 
 init();
