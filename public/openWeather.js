@@ -130,6 +130,8 @@ const getWeather = (lat, lng) => {
 
             const createP = document.createElement('p');
             createP.textContent = dateToKorean(date);
+            createP.style.borderBottom = "1px solid black";
+            createP.style.marginBottom = "-1px";
             createDiv.appendChild(createP);
 
             Object.keys(weatherText).map(key => {
