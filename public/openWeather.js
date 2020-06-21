@@ -7,21 +7,21 @@ let hotColorArr = ['#ffb9b9', "#ffd1d1", "#ffb9b9", "#ff8b8b", "#ff5d5d", "#ff2e
 
 const degree = (deg) => {
     if(deg < 22.5 || deg >= 337.5) {
-        return '북풍';
+        return '북풍↓';
     } else if(deg >= 22.5 && deg < 67.5) {
-        return '북동풍';
+        return '북동풍↙';
     } else if(deg >= 67.5 && deg < 112.5) {
-        return '동풍';
+        return '동풍←';
     } else if(deg >= 112.5 && deg < 157.5) {
-        return '남동풍';
+        return '남동풍↖';
     } else if(deg >= 157.5 && deg < 202.5) {
-        return '남풍';
+        return '남풍↑';
     } else if(deg >= 202.5 && deg < 247.5) {
-        return '남서풍';
+        return '남서풍↗';
     } else if(deg >= 247.5 && deg < 292.5) {
-        return '서풍';
+        return '서풍→';
     } else if(deg >= 292.5 && deg < 337.5) {
-        return '북서풍';
+        return '북서풍↘';
     }
 };
 
@@ -105,7 +105,7 @@ const addNumberColor = (num, data, dom) => {
 const alarming = () => {
     setTimeout(() => {
         notify();
-    }, 3000);
+    }, 100);
 };
 
 const notify = () => {
@@ -128,8 +128,32 @@ const getWeather = (lat, lng) => {
         createPOne.textContent = `지역 : ${json.city.name}`
         weather.appendChild(createPOne);
         
+        let days = date.setTime(json.list[0].dt * 1000);
+        days = date.getDate();
+        let curDays = 0;
+
+        const createHrOne = document.createElement('hr');
+        weather.appendChild(createHrOne);
+
+        const createPTwo = document.createElement('p');
+        createPTwo.textContent = dateToKorean(date).slice(0, -7);
+        weather.appendChild(createPTwo);
+
         for(let i = 0; i < CNT; i++) {
             date.setTime(json.list[i].dt * 1000);
+            curDays = date.getDate();
+
+            
+
+            if(days !== curDays) {
+                const createHr = document.createElement('hr');
+                weather.appendChild(createHr);
+
+                const createP = document.createElement('p');
+                createP.textContent = dateToKorean(date).slice(0, -7);
+                weather.appendChild(createP);
+                days = curDays;
+            }
 
             let weatherText = {
                 '기온': (json.list[i].main.temp).toFixed(1),
@@ -143,13 +167,15 @@ const getWeather = (lat, lng) => {
             const createDiv = document.createElement('div');
 
             const createP = document.createElement('p');
-            createP.textContent = dateToKorean(date);
+            createP.textContent = dateToKorean(date).slice(-7);
             createP.style.borderBottom = "1px solid black";
             createP.style.marginBottom = "-1px";
             createDiv.appendChild(createP);
 
+
             Object.keys(weatherText).map(key => {
                 const createP = document.createElement('p');
+                
                 if(key === '기온') {
                     createP.textContent = `${key} : ${addNumberColor(weatherText[key], key, createP)}°C`
                 } else {
@@ -158,6 +184,8 @@ const getWeather = (lat, lng) => {
                 createDiv.appendChild(createP);
                 weather.appendChild(createDiv);
             });
+
+            
         }
     });
 };
