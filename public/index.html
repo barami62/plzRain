@@ -7,25 +7,29 @@
     <title>plzRain</title>
     <link href="/styles.css">
     <style>
+        body {
+            background-color: #c0c2ce;
+        }
+
         #openWeather {
             text-align: center;
         }
 
-        #openWeather > hr {
+        #openWeather>hr {
             color: black;
             height: 1px;
             background-color: black;
             margin-bottom: 40px;
         }
 
-        #openWeather > div {
+        #openWeather>div {
             border: 1px solid black;
             margin: 3px;
             display: inline-block;
             width: 150px;
         }
 
-        #openWeather > div > p {
+        #openWeather>div>p {
             margin: 5px;
         }
     </style>
@@ -37,27 +41,8 @@
     <button onclick="alarming()">컴퓨터용 알람</button>
     <button type="button" id="notification" onclick="showNotification();">모바일용 알람</button>
     <div id="openWeather"></div>
-    
-    <script src="openWeather.js"></script>
-    <script>
-        navigator.serviceWorker.register('/service-worker.js'); //service-worker.js 파일을 불러옵니다.
 
-        function showNotification() {
-            Notification.requestPermission((result) => {
-                if (result === 'granted') {
-                    navigator.serviceWorker.ready.then((registration) => {
-                        registration.showNotification('비가 오고 있어요!!!', {
-                            body: '와! 드디어 비온다!!!',
-                            vibrate: [200, 100, 200, 100, 200, 100, 200],
-                            icon: '/rain.jpg',
-                            tag: 'vibration-sample',
-                            data: 'https://plzrain.herokuapp.com/'
-                        });
-                    });
-                }
-            });
-        };
-    </script>
+    <script src="openWeather.js"></script>
 </body>
 
 </html>

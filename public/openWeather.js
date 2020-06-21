@@ -116,6 +116,40 @@ const notify = () => {
     }
 };
 
+self.addEventListener('notificationclick', (event) => {  //Notification을 클릭할 떄 이벤트를 정의합니다.
+    event.notification.close();  // Notification을 닫습니다.
+
+    event.waitUntil(clients.matchAll({  //같은 주소의 페이지가 열려있는 경우 focus
+        type: 'window'
+    }).then((clientList) => {
+        for (var i = 0; i < clientList.length; i++) {
+            var client = clientList[i];
+            if (client.url === '/' && 'focus' in client) {
+                return client.focus();
+            }
+        }
+        if (clients.openWindow) { //같은 주소가 아닌 경우 새창으로 
+            return clients.openWindow(event.notification.data);
+        }
+    }));
+});
+
+const showNotification = () => {
+    Notification.requestPermission((result) => {
+        if (result === 'granted') {
+            navigator.serviceWorker.ready.then((registration) => {
+                registration.showNotification('비가 오고 있어요!!!', {
+                    body: '와! 드디어 비온다!!!',
+                    vibrate: [200, 100, 200, 100, 200, 100, 200],
+                    icon: '/rain.jpg',
+                    tag: 'vibration-sample',
+                    data: 'https://plzrain.herokuapp.com/'
+                });
+            });
+        }
+    });
+};
+
 const getWeather = (lat, lng) => {
     fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${weatherKey}&units=metric&lang=kr&cnt=${CNT}`
     ).then((res) => {
@@ -139,6 +173,8 @@ const getWeather = (lat, lng) => {
         createPTwo.textContent = dateToKorean(date).slice(0, -7);
         weather.appendChild(createPTwo);
 
+        let rainNum = 0;
+        
         for(let i = 0; i < CNT; i++) {
             date.setTime(json.list[i].dt * 1000);
             curDays = date.getDate();
@@ -172,10 +208,13 @@ const getWeather = (lat, lng) => {
             createP.style.marginBottom = "-1px";
             createDiv.appendChild(createP);
 
-
             Object.keys(weatherText).map(key => {
                 if(key === '날씨기준') {
-
+                    if(weatherText[key] === "Rain" && rainNum === 0) {
+                        console.log("비 오는 거 감지");
+                        showNotification();
+                        rainNum += 1;
+                    }
                 } else {
                     if (key === '아이콘') {
                         const createImg = document.createElement('img');
@@ -245,14 +284,7 @@ const init = () => {
         if (window.Notification) {
             Notification.requestPermission();
         }
-    }
-    // api.openweathermap.org/data/2.5/forecast?lat=35&lon=139
-    fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=38.1219&lon=127.5447&appid=${weatherKey}&units=metric&lang=kr&cnt=100`
-    ).then((res) => {
-        return res.json();
-    }).then((json) => {
-        console.log(json);
-    });
+    };
 };
 
 init();
