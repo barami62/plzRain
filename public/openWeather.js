@@ -96,8 +96,35 @@ const addNumberColor = (num, data, dom) => {
         case '구름' :
 
             break;
-        case '풍속' :
-
+        case '강수량' :
+            if (num === 0) {
+                dom.style.color = 'black';
+                return num
+            }else if(num < 1 && num > 0) {
+                dom.style.color = hotColorArr[4];
+                dom.style.fontWeight = "900";
+                return num
+            } else if(num < 2.5) {
+                dom.style.color = hotColorArr[4];
+                dom.style.fontWeight = "900";
+                return num
+            } else if(num < 5) {
+                dom.style.color = hotColorArr[4];
+                dom.style.fontWeight = "900";
+                return num
+            } else if(num < 7.5) {
+                dom.style.color = hotColorArr[5];
+                dom.style.fontWeight = "900";
+                return num
+            } else if(num < 10) {
+                dom.style.color = hotColorArr[5];
+                dom.style.fontWeight = "900";
+                return num
+            } else if(num >= 10) {
+                dom.style.color = hotColorArr[6];
+                dom.style.fontWeight = "900";
+                return num
+            }
             break;
     }
 };
@@ -174,7 +201,7 @@ const getWeather = (lat, lng) => {
         weather.appendChild(createPTwo);
 
         let rainNum = 0;
-        
+
         for(let i = 0; i < CNT; i++) {
             date.setTime(json.list[i].dt * 1000);
             curDays = date.getDate();
@@ -189,12 +216,24 @@ const getWeather = (lat, lng) => {
                 days = curDays;
             }
 
+            let rainVolume;
+            
+            
+            if(json.list[i].rain === undefined) {
+                rainVolume = 0;
+                console.log("비 안 옴");
+            } else {
+                rainVolume = json.list[i].rain['3h'];
+                console.log(json.list[i].rain);
+            }
+
             let weatherText = {
                 '아이콘': json.list[i].weather[0].icon,
                 '기온': (json.list[i].main.temp).toFixed(1),
                 '습도': json.list[i].main.humidity + "%",
                 '날씨기준': json.list[i].weather[0].main,
                 '날씨': json.list[i].weather[0].description,
+                '강수량': rainVolume,
                 '풍속': json.list[i].wind.speed + "m/s",
                 '풍향': degree(json.list[i].wind.deg),
                 '구름': json.list[i].clouds.all + "%",
@@ -224,15 +263,22 @@ const getWeather = (lat, lng) => {
                         createImg.style.width = "50px";
 
                         createDiv.appendChild(createImg);
+                    } else if(key === '강수량') {
+                        const createP = document.createElement('p');
+                        createP.textContent = `${key} : ${addNumberColor(weatherText[key], key, createP)}`;
+                        createDiv.appendChild(createP);
+
                     } else if(key === '기온') {
                         const createP = document.createElement('p');
                         createP.textContent = `${key} : ${addNumberColor(weatherText[key], key, createP)}°C`;
                         createP.style.marginTop = "0";
                         createDiv.appendChild(createP);
+
                     } else {
                         const createP = document.createElement('p');
                         createP.textContent = `${key} : ${weatherText[key]}`;
                         createDiv.appendChild(createP);
+
                     }
                     weather.appendChild(createDiv);
                 }
